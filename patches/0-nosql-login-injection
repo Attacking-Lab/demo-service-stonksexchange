@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+# Close the BSON operator-injection in POST /login: req.body.username and
+# req.body.password flowed straight into the users query, so a JSON object
+# like {"$gte": "..."} was interpreted as a Mongo query operator. Coercing
+# both to strings makes any object collapse to "[object Object]" (a literal
+# that matches no user), while ordinary string logins are unchanged.
+#
+# The context lines below track the service source. They are the styled error
+# responses in POST /login, so restyling those means regenerating this hunk.
+patch -p1 <<'EOF'
+--- a/routes/index.js
++++ b/routes/index.js
+@@ -60,17 +60,17 @@
+     return;
+   }
+   var db = req.app.locals.db;
+-  db.collection('users').findOne({ 'username': req.body.username }, { 'sort': { '$natural': -1 } }).then(results => {
++  db.collection('users').findOne({ 'username': String(req.body.username) }, { 'sort': { '$natural': -1 } }).then(results => {
+     if (!results) {
+       renderError(res, 400, 'Invalid username or password');
+       return;
+     }
+-    argon2.verify(results.password, req.body.password).then(result => {
++    argon2.verify(results.password, String(req.body.password)).then(result => {
+       if (!result) {
+         renderError(res, 400, 'Invalid username or password');
+         return;
+       }
+-      req.session.user = req.body.username;
++      req.session.user = String(req.body.username);
+       res.redirect('/');
+     });
+   });
+EOF

@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h1 Messages
+  p.muted Send a new message to a fellow user.
+  .card
+    form(role='form', action='/message', method='post')
+      .form-group
+        label(for='user') Username
+        input.form-control(type='text', id='user', name='username', placeholder='enter the recipients username')
+      .form-group
+        label(for='message') Message
+        input.form-control(type='text', id='message', name='message', placeholder='enter the message to send')
+      .form-actions
+        button.btn.btn-primary(type='submit') Send message
+  .section-head
+    h2 Your messages
+    if messages && messages.length
+      span.count-badge #{messages.length} shown
+  if messages && messages.length
+    ul.message-list
+      for m in messages
+        li.message
+          .message-meta
+            span.message-label From
+            span.message-from #{m.from}
+          .message-meta
+            span.message-label Message
+            p.message-body #{m.message}
+  else
+    p.empty No messages yet — send your first one above.

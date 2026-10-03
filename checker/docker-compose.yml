@@ -1,0 +1,50 @@
+name: checker_stonksexchange
+
+services:
+  stonksexchange-checker:
+    build:
+      context: .
+      secrets:
+        - checker-pull-token
+    ports:
+      - ${CHECKER_PORT:-8000}:8000
+    environment:
+      - MONGO_ENABLED=1
+      - MONGO_HOST=stonksexchange-checker-db
+      - MONGO_PORT=27017
+      - MONGO_USER=enoislove
+      - MONGO_PASSWORD=enoislife1338
+      - OTEL_EXPORTER_OTLP_HEADERS_AUTHORIZATION=${OTEL_EXPORTER_OTLP_HEADERS_AUTHORIZATION}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      - OTEL_EXPORTER_DISABLE_BATCH=${OTEL_EXPORTER_DISABLE_BATCH}
+      - SERVICE_PORT=${SERVICE_PORT:-9000}
+      - ENOCHECKER_HAPROXY_MODE=${ENOCHECKER_HAPROXY_MODE:-0}
+    restart: unless-stopped
+    depends_on:
+      stonksexchange-checker-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/service')"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  stonksexchange-checker-db:
+    image: mongo
+    volumes:
+      - ./stonksexchange-checker-db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: enoislove
+      MONGO_INITDB_ROOT_PASSWORD: enoislife1338
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+secrets:
+  checker-pull-token:
+    environment: CHECKER_PULL_TOKEN

@@ -1,0 +1,792 @@
+/* ==========================================================================
+   Stonks Exchange — trading-terminal theme
+   Self-contained by design: no external fonts, no CDN, no JavaScript.
+   The service runs inside an isolated competition network, so every asset
+   must be served from this origin.
+   ========================================================================== */
+
+:root {
+  /* Without this the UA still assumes a light page: Chrome paints autofilled
+     inputs #e8f0fe with black text, and the password reveal toggle, scrollbars
+     and native widgets render light. Both auth forms set autocomplete, so
+     autofill is the common path here, not an edge case. Firefox honours this
+     property for its own autofill styling. */
+  color-scheme: dark;
+
+  --bg: #0a0e17;
+  --surface: #131b2c;
+  --surface-2: #1a2438;
+  --surface-3: #202c44;
+  --border: #26314b;
+  --border-soft: #1e2940;
+  --text: #e8edf7;
+  --muted: #8a97b8;
+  --accent: #2fd6a5;
+  --accent-strong: #4ce8ba;
+  --accent-glow: rgba(47, 214, 165, 0.14);
+  --danger: #ff6b7a;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.9);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% -10%, rgba(47, 214, 165, 0.10), transparent 45%),
+    radial-gradient(circle at 88% 0%, rgba(88, 130, 255, 0.10), transparent 42%);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------- typography */
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5em;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-weight: 650;
+}
+
+h1 {
+  font-size: 1.9rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+code,
+pre,
+.mono {
+  font-family: var(--mono);
+}
+
+/* ------------------------------------------------------------------ layout */
+
+.container {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+main.container {
+  flex: 1 0 auto;
+  padding-top: 36px;
+  padding-bottom: 56px;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(10, 14, 23, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 62px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.brand:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* An inline SVG mark rather than an emoji: emoji carry their own artwork and
+   background, so on this tile they read as a light chip inside a green square,
+   and they render differently (or as tofu) on every platform. */
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  /* Kept at the bright end of the accent ramp: the ink below only clears 4.5:1
+     against the lighter half. */
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  color: #06231b;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 550;
+  border: 1px solid transparent;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.nav-link.is-active {
+  color: var(--accent);
+  background: var(--accent-glow);
+  border-color: rgba(47, 214, 165, 0.32);
+}
+
+.nav-link--cta {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.nav-link--cta:hover {
+  border-color: var(--accent);
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.user-chip strong {
+  color: var(--text);
+  font-family: var(--mono);
+  font-weight: 600;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ------------------------------------------------------------------- cards */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 26px;
+  box-shadow: var(--shadow);
+}
+
+.card + .card,
+.card + h2,
+h2 + .card {
+  margin-top: 22px;
+}
+
+.card-title {
+  margin-top: 0;
+}
+
+.card--auth {
+  max-width: 440px;
+  margin: 8px auto 0;
+}
+
+/* -------------------------------------------------------------------- hero */
+
+.hero {
+  padding: 8px 0 4px;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 5px 12px;
+  border: 1px solid rgba(47, 214, 165, 0.3);
+  border-radius: 999px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 2.9rem);
+}
+
+.lead {
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* ------------------------------------------------------------------ ticker */
+
+.ticker {
+  margin-top: 34px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.ticker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--surface-2);
+}
+
+.ticker-head h2 {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.live-dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  /* Slow and shallow. At 2.4s down to 0.25 this blinked hard enough to pull
+     the eye back to a list that never actually changes. */
+  animation: pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.ticker-rows {
+  display: grid;
+}
+
+.ticker-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 13px 20px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.ticker-row:first-child {
+  border-top: 0;
+}
+
+.ticker-symbol {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.03em;
+  min-width: 4.5rem;
+}
+
+.ticker-name {
+  color: var(--muted);
+  font-size: 0.86rem;
+  flex: 1 1 auto;
+}
+
+.ticker-price {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticker-change {
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 4.6rem;
+  text-align: right;
+}
+
+.up {
+  color: var(--accent);
+}
+
+.down {
+  color: var(--danger);
+}
+
+/* ---------------------------------------------------------- keyboard focus */
+
+/* Links and buttons otherwise fall back to the UA's default ring, which reads
+   as a different site next to the themed field glow. Form controls are omitted
+   on purpose — .form-control:focus already draws the accent ring, and :focus
+   keeps it for mouse users too. */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------- forms */
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* 5.67:1 on the field background; the previous #5d6a8a sat at 3.58:1, under
+   the 4.5:1 AA floor for body text. */
+.form-control::placeholder {
+  color: #7d8bad;
+}
+
+/* color-scheme handles Firefox; WebKit still paints its own light background
+   over autofilled fields, so push it back out to the page colour with an
+   inset shadow (background-color itself cannot be overridden here). */
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset;
+  box-shadow: 0 0 0 1000px var(--bg) inset;
+  caret-color: var(--text);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ----------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    transform 0.08s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #06231b;
+}
+
+.btn-primary:hover {
+  background: var(--accent-strong);
+  color: #06231b;
+  text-decoration: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.form-actions {
+  margin-top: 22px;
+}
+
+/* ---------------------------------------------------------------- messages */
+
+.message-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.message {
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.message-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.message-meta + .message-meta {
+  margin-top: 8px;
+}
+
+.message-label {
+  min-width: 4.6rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.message-from {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* Long message bodies must wrap rather than overflow or truncate.
+   Body text stays in --text: a flag is a long string, and colouring the whole
+   block accent-green made it glow as loudly as the primary button. The green
+   left border on .message is the signal; the mono face sets it apart. */
+.message-body {
+  margin: 0;
+  flex: 1 1 12rem;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.empty {
+  padding: 26px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  text-align: center;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 34px 0 14px;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.count-badge {
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------- error */
+
+/* Narrow and centred, like the auth cards, so a 404 or a rejected form
+   submission reads as a page rather than a stray paragraph of text. */
+.card--error {
+  max-width: 640px;
+  margin: 8px auto 0;
+  border-color: rgba(255, 107, 122, 0.35);
+}
+
+.card--error h1 {
+  color: var(--danger);
+}
+
+.error-status {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 107, 122, 0.1);
+  color: var(--danger);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.error-actions {
+  margin-top: 22px;
+}
+
+/* The stack trace is a development-only detail. <details> keeps it one click
+   away instead of letting a wall of monospace dominate the page — no
+   JavaScript involved. */
+.error-detail {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.error-detail summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.error-detail summary:hover {
+  color: var(--text);
+}
+
+.error-detail summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.error-stack {
+  margin: 16px 0 0;
+  padding: 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.site-footer {
+  flex-shrink: 0;
+  padding: 22px 0 30px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* -------------------------------------------------------------- responsive */
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14.5px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  main.container {
+    padding-top: 26px;
+    padding-bottom: 40px;
+  }
+
+  /* Brand on its own row, nav on the next one. The nav stays on a single
+     line and scrolls horizontally instead of wrapping a stray link onto a
+     third row; the username collapses to its status dot to make room. */
+  .header-inner {
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    flex: 0 0 auto;
+  }
+
+  .nav {
+    width: 100%;
+    margin-left: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    padding: 6px 11px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .user-chip {
+    padding: 5px 9px;
+  }
+
+  .user-chip strong {
+    display: none;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .ticker-name {
+    display: none;
+  }
+
+  .message-label {
+    min-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

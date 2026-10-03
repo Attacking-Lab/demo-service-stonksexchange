@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  .card.card--error
+    if error && error.status
+      p.error-status Error #{error.status}
+    h1= message
+    //- Collapsed by default: a full stack dump is a development detail, and
+    //- uncollapsed it dominated the page it was meant to sit on.
+    if error && error.stack
+      details.error-detail
+        summary Stack trace
+        pre.error-stack #{error.stack}
+    .error-actions
+      a.btn.btn-primary(href='/') Back to the trading floor

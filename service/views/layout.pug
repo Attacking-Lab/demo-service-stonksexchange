@@ -1,0 +1,37 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    //- Declared here as well as in the stylesheet so the canvas is dark before
+    //- the CSS arrives, instead of flashing white on a slow first paint.
+    meta(name='color-scheme', content='dark')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    header.site-header
+      .container.header-inner
+        a.brand(href='/')
+          span.brand-mark
+            //- Self-hosted inline SVG: an emoji here renders as its own little
+            //- picture (often on a light background) and varies per platform.
+            svg(viewBox='0 0 24 24', width='18', height='18', fill='none', stroke='currentColor', stroke-width='2.2', stroke-linecap='round', stroke-linejoin='round', aria-hidden='true', focusable='false')
+              path(d='M3 17.5 9.5 11l3.5 3.5L21 6.5')
+              path(d='M15.5 6.5H21v5.5')
+          span.brand-text Stonks Exchange
+        nav.nav
+          a.nav-link(href='/', class=currentPath === '/' ? 'is-active' : '') Home
+          a.nav-link(href='/about', class=currentPath === '/about' ? 'is-active' : '') About
+          if user
+            a.nav-link(href='/messages', class=currentPath === '/messages' ? 'is-active' : '') Messages
+            span.user-chip
+              strong= user
+            a.nav-link.nav-link--cta(href='/logout') Logout
+          else
+            a.nav-link(href='/login', class=currentPath === '/login' ? 'is-active' : '') Login
+            a.nav-link.nav-link--cta(href='/register', class=currentPath === '/register' ? 'is-active' : '') Register
+    main.container
+      block content
+    footer.site-footer
+      .container
+        p Stonks Exchange — where the hottest stonks are discussed.

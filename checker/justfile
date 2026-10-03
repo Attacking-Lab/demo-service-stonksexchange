@@ -1,0 +1,38 @@
+unexport VIRTUAL_ENV
+
+# Install dependencies
+sync:
+    uv sync
+
+# Format Python source files
+format:
+    uv run ruff format .
+
+# Lint Python source files and apply safe fixes
+lint:
+    uv run ruff check --fix .
+
+# Run static type checking
+typecheck:
+    uv run ty check .
+    uv run mypy checker.py
+
+# Run unit tests
+test-units:
+    uv run pytest --ignore=tests/integration
+
+# Run integration tests
+test-integration:
+    uv run pytest tests/integration
+
+# Run all tests
+test: test-units test-integration
+
+# Run all checks: format, lint, typecheck, and unit tests
+check: format lint typecheck test-units
+
+# Remove build artifacts and caches
+clean:
+    find . -type d -name __pycache__ -exec rm -rf {} +
+    find . -type f -name "*.pyc" -delete
+    rm -rf .mypy_cache .ruff_cache .pytest_cache dist build *.egg-info

@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  section.hero
+    span.eyebrow Market open
+    //- Was `= title`, which printed "Stonks Exchange" a third time on the page
+    //- (it is already the brand next to it and in the <title>). Played against
+    //- the ticker below, where BAMBI is down 6.90%.
+    h1 Stonks only go up.
+    p.lead Welcome to #{title} — the trading floor where the hottest stonks are discussed, shared, and occasionally dumped.
+    .hero-actions
+      if user
+        a.btn.btn-primary(href='/messages') Go to your messages
+        a.btn.btn-ghost(href='/about') What is this?
+      else
+        a.btn.btn-primary(href='/register') Create account
+        a.btn.btn-ghost(href='/login') Sign in
+
+  section.ticker
+    .ticker-head
+      h2 Today's movers
+      span.live-dot Live
+    .ticker-rows
+      .ticker-row
+        span.ticker-symbol STONKS
+        span.ticker-name Stonks Composite
+        span.ticker-price 1337.00
+        span.ticker-change.up ▲ +42.00%
+      .ticker-row
+        span.ticker-symbol ENO
+        span.ticker-name EnoEngine Corp.
+        span.ticker-price 9000.00
+        span.ticker-change.up ▲ +13.37%
+      .ticker-row
+        span.ticker-symbol BAMBI
+        span.ticker-name BambiCTF Holdings
+        span.ticker-price 404.00
+        span.ticker-change.down ▼ −6.90%
+      .ticker-row
+        span.ticker-symbol TUNA
+        span.ticker-name Tuna Can Futures
+        span.ticker-price 0.99
+        span.ticker-change.up ▲ +100.00%

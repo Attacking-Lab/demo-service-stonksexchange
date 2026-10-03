@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  .card.card--auth
+    h1.card-title Login
+    p.muted Sign in with your account. Don't have one? #[a(href='/register') Register Now.]
+    form(role='form', action='/login', method='post')
+      .form-group
+        label(for='user') Username
+        input.form-control(type='text', id='user', name='username', placeholder='enter your username', autocomplete='username')
+      .form-group
+        label(for='password') Password
+        input.form-control(type='password', id='password', name='password', placeholder='enter your password', autocomplete='current-password')
+      .form-actions
+        button.btn.btn-primary.btn-block(type='submit') Sign in

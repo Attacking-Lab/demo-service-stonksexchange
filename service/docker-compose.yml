@@ -1,0 +1,38 @@
+name: stonksexchange
+
+services:
+  stonksexchange-service:
+    build: .
+    ports:
+      - "${SERVICE_PORT:-9000}:${SERVICE_PORT:-9000}"
+    environment:
+     - SERVICE_PORT=${SERVICE_PORT:-9000}
+     - MONGO_ENABLED=1
+     - MONGO_HOST=stonksexchange-db
+     - MONGO_PORT=27017
+     - MONGO_USER=enoislove
+     - MONGO_PASSWORD=enoislife1337
+    restart: unless-stopped
+    depends_on:
+      stonksexchange-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:${SERVICE_PORT:-9000}/',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+  stonksexchange-db:
+    image: mongo
+    volumes:
+      - ./stonksexchange-db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: enoislove
+      MONGO_INITDB_ROOT_PASSWORD: enoislife1337
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
